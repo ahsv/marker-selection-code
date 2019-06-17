@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# Alexander Vargo
+# 01 Dec 2017
+# updated 25 March 2018
+#
+# Want to run the following two commands before submitting this job:
+# module load R/3.5.0 r-biomed-libs/3.5.0
+# export R_LIBS_USER="/home/ahsvargo/R/x86_64-pc-linux-gnu-library/3.5.0"
+
+#### PBS preamble
+
+#PBS -N zhengfilt-edger 
+
+#PBS -M ahsvargo@umich.edu
+#PBS -m abe
+
+# #cores, memory, walltime
+#PBS -l nodes=1:ppn=2,mem=120gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -V
+
+# make it an array job
+#PBS -t 3
+
+# allocation information
+#PBS -A lsa_fluxm
+#PBS -q fluxm
+#PBS -l qos=flux
+
+#### END PBS preamble
+
+# Show list of CPUs this is running on:
+cat "CPUs used:"
+if [ -s "$PBS_NODEFILE" ]; then 
+    echo "Running on"
+    uniq -c $PBS_NODEFILE 
+fi
+
+# change to the directory we submitted from:
+if [ -d "$PBS_O_WORKDIR" ]; then 
+    cd $PBS_O_WORKDIR 
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+rm -rf __pycache__/
+/home/ahsvargo/miniconda3/envs/r35py37/bin/python edgeR.py

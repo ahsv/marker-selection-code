@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# Alexander Vargo
+# 01 Dec 2017
+# updated 25 March 2018
+
+#### PBS preamble
+
+#PBS -N zeisel14-edgerdet
+
+#PBS -M ahsvargo@umich.edu
+#PBS -m abe
+
+# #cores, memory, walltime
+#PBS -l nodes=1:ppn=2,mem=8gb
+#PBS -l walltime=02:30:00
+#PBS -j oe
+#PBS -V
+
+# make it an array job
+#PBS -t 0-4
+
+# allocation information
+#PBS -A annacg_fluxod
+#PBS -q fluxod
+#PBS -l qos=flux
+
+#### END PBS preamble
+
+# Show list of CPUs this is running on:
+cat "CPUs used:"
+if [ -s "$PBS_NODEFILE" ]; then 
+    echo "Running on"
+    uniq -c $PBS_NODEFILE 
+fi
+
+# change to the directory we submitted from:
+if [ -d "$PBS_O_WORKDIR" ]; then 
+    cd $PBS_O_WORKDIR 
+    echo "Running from $PBS_O_WORKDIR"
+fi
+
+rm -rf __pycache__/
+python edgeR.py
